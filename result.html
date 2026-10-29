@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Result Summary - Next Page</title>
+  <!-- Favicon Logo -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%233b82f6'/%3E%3Cstop offset='100%25' stop-color='%231d4ed8'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='48' height='48' rx='14' fill='url(%23g)'/%3E%3Cpath d='M24 13L9 20.5L24 28L39 20.5L24 13Z' fill='%23ffffff'/%3E%3Cpath d='M14 24.5V30.5C14 33.8 18.5 35.5 24 35.5C29.5 35.5 34 33.8 34 30.5V24.5L24 29.5L14 24.5Z' fill='%23ffffff' fill-opacity='0.92'/%3E%3Cpath d='M39 20.5V28' stroke='%23ffffff' stroke-width='2' stroke-linecap='round'/%3E%3Ccircle cx='39' cy='29' r='1.5' fill='%23ffffff'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-gradient: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      --secondary: #0ea5e9;
+      --secondary-hover: #0284c7;
+      --secondary-gradient: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+      --bg-gradient: radial-gradient(circle at 10% 20%, #eff6ff 0%, #f8fafc 90%);
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --focus-ring: rgba(37, 99, 235, 0.2);
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+      --shadow-md: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+      --shadow-lg: 0 20px 35px -10px rgba(37, 99, 235, 0.12), 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background: var(--bg-gradient);
+      background-attachment: fixed;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 30px 16px;
+      color: var(--text-main);
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      width: 100%;
+      padding: 36px 30px;
+      border-radius: 20px;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-lg);
+      backdrop-filter: blur(8px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, #2563eb, #38bdf8, #6366f1);
+    }
+
+    /* Header & Logo */
+    .header-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      margin-bottom: 26px;
+    }
+
+    .title-logo-badge {
+      width: 60px;
+      height: 60px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.4);
+      margin-bottom: 14px;
+      transform: translateY(0);
+      transition: transform 0.3s ease;
+    }
+
+    .title-logo-badge:hover {
+      transform: translateY(-2px) scale(1.04);
+    }
+
+    .title-logo-badge svg {
+      width: 36px;
+      height: 36px;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 1.55rem;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.35;
+      letter-spacing: -0.02em;
+    }
+
+    h1 span.highlight {
+      background: linear-gradient(120deg, #2563eb, #0284c7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .bold-label {
+      display: block;
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: #1e293b;
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 0.98rem;
+      font-weight: 600;
+      border: 1.5px solid var(--border-color);
+      border-radius: 10px;
+      color: #334155;
+      background-color: #f1f5f9;
+      outline: none;
+      cursor: default;
+    }
+
+    /* Table Styling */
+    .table-container {
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      overflow: hidden;
+      margin-top: 10px;
+      margin-bottom: 24px;
+      background: #ffffff;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .marks-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .marks-table th,
+    .marks-table td {
+      padding: 12px 14px;
+      text-align: left;
+      font-size: 0.92rem;
+      color: #1e293b;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .marks-table thead th {
+      background-color: #f8fafc;
+      font-weight: 700;
+      color: #475569;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      letter-spacing: 0.04em;
+    }
+
+    .marks-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .average-row {
+      background-color: #f8fafc;
+    }
+
+    .average-row td {
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    /* Buttons */
+    .button-group {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      margin-top: 4px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 13px 20px;
+      font-size: 0.98rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+    }
+
+    .btn-primary {
+      background: var(--primary-gradient);
+      color: #ffffff;
+      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
+    }
+
+    /* Footer area */
+    .footer-area {
+      text-align: center;
+      margin-top: 26px;
+      padding-top: 18px;
+      border-top: 1px dashed var(--border-color);
+    }
+
+    .footer-badge {
+      display: inline-block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #64748b;
+      background: #f1f5f9;
+      padding: 6px 16px;
+      border-radius: 9999px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .page-footer {
+      text-align: center;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #64748b;
+      letter-spacing: 0.04em;
+    }
+
+    @media (max-width: 480px) {
+      .card {
+        padding: 26px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    <div id="resultPage" class="card">
+      <div class="header-section">
+        <!-- Title Logo -->
+        <div class="title-logo-badge" title="Student Grade Portal Logo">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 3L1 9L12 15L23 9L12 3Z" fill="#ffffff"/>
+            <path d="M5 13.18V17.18C5 19.5 8.13 21 12 21C15.87 21 19 19.5 19 17.18V13.18L12 17L5 13.18Z" fill="#ffffff" fill-opacity="0.9"/>
+            <path d="M23 9V15" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round"/>
+            <circle cx="23" cy="15.5" r="1.2" fill="#ffffff"/>
+          </svg>
+        </div>
+        <h1>Student Result<br><span class="highlight">Summary</span></h1>
+      </div>
+
+      <div class="form-group">
+        <label class="bold-label">Name</label>
+        <input type="text" id="displayName" readonly placeholder="Student Name">
+      </div>
+
+      <div class="form-group">
+        <label class="bold-label">Gender</label>
+        <input type="text" id="displayGender" readonly placeholder="Gender">
+      </div>
+
+      <div class="form-group">
+        <label class="bold-label">Course(s)</label>
+        <input type="text" id="displayCourses" readonly placeholder="Course(s)">
+      </div>
+
+      <div class="table-container">
+        <table class="marks-table">
+          <thead>
+            <tr>
+              <th>Subject</th>
+              <th>Marks</th>
+              <th>Grade</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Machine Learning</td>
+              <td id="displayMlMarks">-</td>
+              <td id="displayMlGrade">-</td>
+            </tr>
+            <tr>
+              <td>Computer Network</td>
+              <td id="displayCnMarks">-</td>
+              <td id="displayCnGrade">-</td>
+            </tr>
+            <tr>
+              <td>Architecture</td>
+              <td id="displayArchMarks">-</td>
+              <td id="displayArchGrade">-</td>
+            </tr>
+            <tr class="average-row">
+              <td colspan="2"><strong>Average</strong></td>
+              <td id="displayAverage"><strong>-</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="button-group">
+        <button type="button" id="backBtn" class="btn btn-primary" onclick="goBack()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Back
+        </button>
+      </div>
+
+      <!-- Footer Area -->
+      <footer class="footer-area">
+        <span class="footer-badge">A.L.M AFLAN /0064</span>
+      </footer>
+    </div>
+  </div>
+
+  <script>
+    function goBack() {
+      if (document.referrer && window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.location.href = "index.html";
+      }
+    }
+
+    // Load data from URL search parameters or localStorage/sessionStorage
+    window.addEventListener("DOMContentLoaded", () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      let data = null;
+
+      if (urlParams.has("name")) {
+        data = {
+          name: urlParams.get("name") || "",
+          gender: urlParams.get("gender") || "Not specified",
+          courses: urlParams.get("courses") || "None",
+          mlMarks: urlParams.get("mlMarks") || "0",
+          mlGrade: urlParams.get("mlGrade") || "-",
+          cnMarks: urlParams.get("cnMarks") || "0",
+          cnGrade: urlParams.get("cnGrade") || "-",
+          archMarks: urlParams.get("archMarks") || "0",
+          archGrade: urlParams.get("archGrade") || "-",
+          average: urlParams.get("average") || "-"
+        };
+      } else {
+        try {
+          const stored = sessionStorage.getItem("studentResultData") || localStorage.getItem("studentResultData");
+          if (stored) {
+            data = JSON.parse(stored);
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      if (data) {
+        document.getElementById("displayName").value = data.name || "";
+        document.getElementById("displayGender").value = data.gender || "";
+        document.getElementById("displayCourses").value = data.courses || "";
+
+        document.getElementById("displayMlMarks").textContent = data.mlMarks ?? "-";
+        document.getElementById("displayMlGrade").textContent = data.mlGrade ?? "-";
+
+        document.getElementById("displayCnMarks").textContent = data.cnMarks ?? "-";
+        document.getElementById("displayCnGrade").textContent = data.cnGrade ?? "-";
+
+        document.getElementById("displayArchMarks").textContent = data.archMarks ?? "-";
+        document.getElementById("displayArchGrade").textContent = data.archGrade ?? "-";
+
+        document.getElementById("displayAverage").innerHTML = `<strong>${data.average ?? "-"}</strong>`;
+      }
+    });
+  </script>
+</body>
+</html>

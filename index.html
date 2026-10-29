@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Marks & Grade Calculator</title>
+  <!-- Favicon Logo -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%233b82f6'/%3E%3Cstop offset='100%25' stop-color='%231d4ed8'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='48' height='48' rx='14' fill='url(%23g)'/%3E%3Cpath d='M24 13L9 20.5L24 28L39 20.5L24 13Z' fill='%23ffffff'/%3E%3Cpath d='M14 24.5V30.5C14 33.8 18.5 35.5 24 35.5C29.5 35.5 34 33.8 34 30.5V24.5L24 29.5L14 24.5Z' fill='%23ffffff' fill-opacity='0.92'/%3E%3Cpath d='M39 20.5V28' stroke='%23ffffff' stroke-width='2' stroke-linecap='round'/%3E%3Ccircle cx='39' cy='29' r='1.5' fill='%23ffffff'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-gradient: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      --secondary: #0ea5e9;
+      --secondary-hover: #0284c7;
+      --secondary-gradient: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+      --bg-gradient: radial-gradient(circle at 10% 20%, #eff6ff 0%, #f8fafc 90%);
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --focus-ring: rgba(37, 99, 235, 0.2);
+      --success: #10b981;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+      --shadow-md: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+      --shadow-lg: 0 20px 35px -10px rgba(37, 99, 235, 0.12), 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background: var(--bg-gradient);
+      background-attachment: fixed;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 30px 16px;
+      color: var(--text-main);
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      width: 100%;
+      padding: 36px 30px;
+      border-radius: 20px;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-lg);
+      backdrop-filter: blur(8px);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, #2563eb, #38bdf8, #6366f1);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Header & Logo */
+    .header-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      margin-bottom: 26px;
+    }
+
+    .title-logo-badge {
+      width: 60px;
+      height: 60px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.4);
+      margin-bottom: 14px;
+      transform: translateY(0);
+      transition: transform 0.3s ease;
+    }
+
+    .title-logo-badge:hover {
+      transform: translateY(-2px) scale(1.04);
+    }
+
+    .title-logo-badge svg {
+      width: 36px;
+      height: 36px;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 1.55rem;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.35;
+      letter-spacing: -0.02em;
+    }
+
+    h1 span.highlight {
+      background: linear-gradient(120deg, #2563eb, #0284c7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Form Elements */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .bold-label {
+      display: block;
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: #1e293b;
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+
+    .section-label {
+      display: block;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 10px;
+    }
+
+    input[type="text"],
+    input[type="number"] {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 0.98rem;
+      font-weight: 500;
+      border: 1.5px solid var(--border-color);
+      border-radius: 10px;
+      color: #0f172a;
+      background-color: #f8fafc;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus {
+      background-color: #ffffff;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px var(--focus-ring);
+    }
+
+    input[readonly] {
+      background-color: #f1f5f9;
+      color: #334155;
+      font-weight: 600;
+      border-color: #e2e8f0;
+      cursor: default;
+    }
+
+    .options-group {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .option-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: #334155;
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 9px;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s ease;
+    }
+
+    .option-label:hover {
+      background-color: #f1f5f9;
+      border-color: #cbd5e1;
+    }
+
+    .option-label:has(input:checked) {
+      background-color: #eff6ff;
+      border-color: #3b82f6;
+      color: #1d4ed8;
+    }
+
+    input[type="radio"],
+    input[type="checkbox"] {
+      width: 17px;
+      height: 17px;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    /* Table Styling */
+    .table-container {
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      overflow: hidden;
+      margin-top: 10px;
+      margin-bottom: 24px;
+      background: #ffffff;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .marks-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .marks-table th,
+    .marks-table td {
+      padding: 12px 14px;
+      text-align: left;
+      font-size: 0.92rem;
+      color: #1e293b;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .marks-table thead th {
+      background-color: #f8fafc;
+      font-weight: 700;
+      color: #475569;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      letter-spacing: 0.04em;
+    }
+
+    .marks-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .marks-table tbody tr:hover {
+      background-color: #fbfcfe;
+    }
+
+    .marks-table input[type="number"] {
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: 0.92rem;
+    }
+
+    .grade-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 32px;
+      height: 28px;
+      padding: 0 8px;
+      background: #f1f5f9;
+      color: #334155;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .average-row {
+      background-color: #f8fafc;
+    }
+
+    .average-row td {
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    /* Buttons */
+    .button-group {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      margin-top: 4px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 13px 20px;
+      font-size: 0.98rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn-primary {
+      background: var(--primary-gradient);
+      color: #ffffff;
+      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
+    }
+
+    .btn-secondary {
+      background: var(--secondary-gradient);
+      color: #ffffff;
+      box-shadow: 0 6px 16px rgba(14, 165, 233, 0.3);
+    }
+
+    .btn-secondary:hover {
+      box-shadow: 0 8px 20px rgba(14, 165, 233, 0.4);
+    }
+
+    /* Success Message */
+    .status-message {
+      margin-top: 18px;
+      text-align: center;
+      color: #065f46;
+      background-color: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.94rem;
+      line-height: 1.4;
+      display: none;
+    }
+
+    .status-message:not(:empty) {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Footer area */
+    .footer-area {
+      text-align: center;
+      margin-top: 26px;
+      padding-top: 18px;
+      border-top: 1px dashed var(--border-color);
+    }
+
+    .footer-badge {
+      display: inline-block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #64748b;
+      background: #f1f5f9;
+      padding: 6px 16px;
+      border-radius: 9999px;
+      border: 1px solid #e2e8f0;
+    }
+
+    /* Bottom External Page Footer */
+    .page-footer {
+      text-align: center;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #64748b;
+      letter-spacing: 0.04em;
+    }
+
+    @media (max-width: 480px) {
+      .card {
+        padding: 26px 20px;
+      }
+      .button-group {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- PAGE 1: Calculator Form -->
+    <div id="calculatorPage" class="card">
+      <div class="header-section">
+        <!-- Title Logo -->
+        <div class="title-logo-badge" title="Student Grade Portal Logo">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 3L1 9L12 15L23 9L12 3Z" fill="#ffffff"/>
+            <path d="M5 13.18V17.18C5 19.5 8.13 21 12 21C15.87 21 19 19.5 19 17.18V13.18L12 17L5 13.18Z" fill="#ffffff" fill-opacity="0.9"/>
+            <path d="M23 9V15" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round"/>
+            <circle cx="23" cy="15.5" r="1.2" fill="#ffffff"/>
+          </svg>
+        </div>
+        <h1>Student Marks &amp; Grade<br><span class="highlight">Calculator</span></h1>
+      </div>
+
+      <form id="gradeForm">
+        <!-- Editable Student Name Input -->
+        <div class="form-group">
+          <label for="studentName" class="bold-label">Name</label>
+          <input type="text" id="studentName" placeholder="Enter student name" required autocomplete="off">
+        </div>
+
+        <!-- Gender Radio Buttons -->
+        <div class="form-group">
+          <label class="section-label">Gender</label>
+          <div class="options-group">
+            <label class="option-label">
+              <input type="radio" name="gender" value="Male" checked> Male
+            </label>
+            <label class="option-label">
+              <input type="radio" name="gender" value="Female"> Female
+            </label>
+          </div>
+        </div>
+
+        <!-- Course Checkboxes -->
+        <div class="form-group">
+          <label class="section-label">Course</label>
+          <div class="options-group">
+            <label class="option-label">
+              <input type="checkbox" name="course" value="HNDIT"> HNDIT
+            </label>
+            <label class="option-label">
+              <input type="checkbox" name="course" value="HNDSE"> HNDSE
+            </label>
+            <label class="option-label">
+              <input type="checkbox" name="course" value="HNDJA"> HNDJA
+            </label>
+          </div>
+        </div>
+
+        <!-- Subject Marks & Grade Table -->
+        <div class="table-container">
+          <table class="marks-table">
+            <thead>
+              <tr>
+                <th>Subject</th>
+                <th>Marks (0–100)</th>
+                <th>Grade</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Machine Learning</td>
+                <td>
+                  <input type="number" id="mlMarks" min="0" max="100" placeholder="0-100">
+                </td>
+                <td id="mlGrade">-</td>
+              </tr>
+              <tr>
+                <td>Computer Network</td>
+                <td>
+                  <input type="number" id="cnMarks" min="0" max="100" placeholder="0-100">
+                </td>
+                <td id="cnGrade">-</td>
+              </tr>
+              <tr>
+                <td>Architecture</td>
+                <td>
+                  <input type="number" id="archMarks" min="0" max="100" placeholder="0-100">
+                </td>
+                <td id="archGrade">-</td>
+              </tr>
+              <tr class="average-row">
+                <td colspan="2"><strong>Average</strong></td>
+                <td id="averageMarks"><strong>-</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 2 Buttons: 1st Calculate, 2nd Show -->
+        <div class="button-group">
+          <button type="button" id="calculateBtn" class="btn btn-primary">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"></rect><line x1="8" y1="6" x2="16" y2="6"></line><line x1="16" y1="14" x2="16" y2="18"></line><path d="M16 10h.01"></path><path d="M12 10h.01"></path><path d="M8 10h.01"></path><path d="M12 14h.01"></path><path d="M8 14h.01"></path><path d="M12 18h.01"></path><path d="M8 18h.01"></path></svg>
+            Calculate
+          </button>
+          <button type="button" id="showBtn" class="btn btn-secondary">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            Show
+          </button>
+        </div>
+
+        <!-- Dynamic Success Message -->
+        <p id="statusMessage" class="status-message"></p>
+      </form>
+
+      <!-- Footer Area -->
+      <footer class="footer-area">
+        <span class="footer-badge">A.L.M AFLAN /0064</span>
+      </footer>
+    </div>
+
+    <!-- PAGE 2: Next Page Result View -->
+    <div id="resultPage" class="card hidden">
+      <div class="header-section">
+        <!-- Title Logo -->
+        <div class="title-logo-badge" title="Student Grade Portal Logo">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 3L1 9L12 15L23 9L12 3Z" fill="#ffffff"/>
+            <path d="M5 13.18V17.18C5 19.5 8.13 21 12 21C15.87 21 19 19.5 19 17.18V13.18L12 17L5 13.18Z" fill="#ffffff" fill-opacity="0.9"/>
+            <path d="M23 9V15" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round"/>
+            <circle cx="23" cy="15.5" r="1.2" fill="#ffffff"/>
+          </svg>
+        </div>
+        <h1>Student Result<br><span class="highlight">Summary</span></h1>
+      </div>
+
+      <div class="form-group">
+        <label class="bold-label">Name</label>
+        <input type="text" id="displayName" readonly>
+      </div>
+
+      <div class="form-group">
+        <label class="bold-label">Gender</label>
+        <input type="text" id="displayGender" readonly>
+      </div>
+
+      <div class="form-group">
+        <label class="bold-label">Course(s)</label>
+        <input type="text" id="displayCourses" readonly>
+      </div>
+
+      <div class="table-container">
+        <table class="marks-table">
+          <thead>
+            <tr>
+              <th>Subject</th>
+              <th>Marks</th>
+              <th>Grade</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Machine Learning</td>
+              <td id="displayMlMarks">-</td>
+              <td id="displayMlGrade">-</td>
+            </tr>
+            <tr>
+              <td>Computer Network</td>
+              <td id="displayCnMarks">-</td>
+              <td id="displayCnGrade">-</td>
+            </tr>
+            <tr>
+              <td>Architecture</td>
+              <td id="displayArchMarks">-</td>
+              <td id="displayArchGrade">-</td>
+            </tr>
+            <tr class="average-row">
+              <td colspan="2"><strong>Average</strong></td>
+              <td id="displayAverage"><strong>-</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="button-group">
+        <button type="button" id="backBtn" class="btn btn-primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Back
+        </button>
+      </div>
+
+      <!-- Footer Area -->
+      <footer class="footer-area">
+        <span class="footer-badge">A.L.M AFLAN /0064</span>
+      </footer>
+    </div>
+  </div>
+
+  <script>
+    // Determine grade based on marks (0 - 100)
+    function getGrade(marks) {
+      if (marks >= 75) return "A";
+      if (marks >= 60) return "B";
+      if (marks >= 45) return "C";
+      if (marks >= 30) return "D";
+      return "F";
+    }
+
+    // Read inputs and calculate grades + average
+    function calculateStudentData() {
+      const nameInput = document.getElementById("studentName");
+      const name = nameInput.value.trim();
+
+      if (!name) {
+        alert("Please enter the student's name.");
+        nameInput.focus();
+        return null;
+      }
+
+      // Get selected gender
+      const genderInput = document.querySelector('input[name="gender"]:checked');
+      const gender = genderInput ? genderInput.value : "Not specified";
+
+      // Get selected courses
+      const courseCheckboxes = document.querySelectorAll('input[name="course"]:checked');
+      const courses = Array.from(courseCheckboxes).map((cb) => cb.value);
+
+      // Get subject marks
+      const mlMarks = parseFloat(document.getElementById("mlMarks").value) || 0;
+      const cnMarks = parseFloat(document.getElementById("cnMarks").value) || 0;
+      const archMarks = parseFloat(document.getElementById("archMarks").value) || 0;
+
+      // Calculate individual grades
+      const mlGrade = getGrade(mlMarks);
+      const cnGrade = getGrade(cnMarks);
+      const archGrade = getGrade(archMarks);
+
+      // Calculate average to 2 decimal places
+      const average = ((mlMarks + cnMarks + archMarks) / 3).toFixed(2);
+
+      // Update Grade and Average cells in the table
+      document.getElementById("mlGrade").textContent = mlGrade;
+      document.getElementById("cnGrade").textContent = cnGrade;
+      document.getElementById("archGrade").textContent = archGrade;
+      document.getElementById("averageMarks").innerHTML = `<strong>${average}</strong>`;
+
+      return {
+        name,
+        gender,
+        courses: courses.length > 0 ? courses.join(", ") : "None",
+        mlMarks,
+        mlGrade,
+        cnMarks,
+        cnGrade,
+        archMarks,
+        archGrade,
+        average
+      };
+    }
+
+    const calculateBtn = document.getElementById("calculateBtn");
+    const showBtn = document.getElementById("showBtn");
+    const backBtn = document.getElementById("backBtn");
+    const studentNameInput = document.getElementById("studentName");
+    const statusMessage = document.getElementById("statusMessage");
+    const calculatorPage = document.getElementById("calculatorPage");
+    const resultPage = document.getElementById("resultPage");
+
+    // Clear old status message while typing a new student name
+    studentNameInput.addEventListener("input", () => {
+      statusMessage.textContent = "";
+    });
+
+    // 1st Button ("Calculate"): Show grades, average, and dynamic student name message
+    calculateBtn.addEventListener("click", () => {
+      const data = calculateStudentData();
+      if (data) {
+        statusMessage.textContent = `${data.name}'s results calculated successfully.`;
+      }
+    });
+
+    // 2nd Button ("Show"): Populate and open the dedicated next page (result.html)
+    showBtn.addEventListener("click", () => {
+      const data = calculateStudentData();
+      if (data) {
+        // Update in-page elements if fallback is needed
+        if (document.getElementById("displayName")) document.getElementById("displayName").value = data.name;
+        if (document.getElementById("displayGender")) document.getElementById("displayGender").value = data.gender;
+        if (document.getElementById("displayCourses")) document.getElementById("displayCourses").value = data.courses;
+
+        if (document.getElementById("displayMlMarks")) document.getElementById("displayMlMarks").textContent = data.mlMarks;
+        if (document.getElementById("displayMlGrade")) document.getElementById("displayMlGrade").textContent = data.mlGrade;
+
+        if (document.getElementById("displayCnMarks")) document.getElementById("displayCnMarks").textContent = data.cnMarks;
+        if (document.getElementById("displayCnGrade")) document.getElementById("displayCnGrade").textContent = data.cnGrade;
+
+        if (document.getElementById("displayArchMarks")) document.getElementById("displayArchMarks").textContent = data.archMarks;
+        if (document.getElementById("displayArchGrade")) document.getElementById("displayArchGrade").textContent = data.archGrade;
+
+        if (document.getElementById("displayAverage")) document.getElementById("displayAverage").innerHTML = `<strong>${data.average}</strong>`;
+
+        // Store data in sessionStorage and localStorage
+        try {
+          sessionStorage.setItem("studentResultData", JSON.stringify(data));
+          localStorage.setItem("studentResultData", JSON.stringify(data));
+        } catch (e) {
+          console.error(e);
+        }
+
+        // Build URL parameters for instant and robust next page data transfer
+        const params = new URLSearchParams({
+          name: data.name,
+          gender: data.gender,
+          courses: data.courses,
+          mlMarks: data.mlMarks,
+          mlGrade: data.mlGrade,
+          cnMarks: data.cnMarks,
+          cnGrade: data.cnGrade,
+          archMarks: data.archMarks,
+          archGrade: data.archGrade,
+          average: data.average
+        });
+
+        // Navigate to the next page
+        window.location.href = "result.html?" + params.toString();
+      }
+    });
+
+    // Back Button: Return to the calculator page
+    backBtn.addEventListener("click", () => {
+      resultPage.classList.add("hidden");
+      calculatorPage.classList.remove("hidden");
+    });
+  </script>
+
+</body>
+</html>
